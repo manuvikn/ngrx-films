@@ -15,6 +15,7 @@ import { Store, select } from '@ngrx/store';
 import {
   selectAllFilms,
   selectFilmsError,
+  selectIsLoading,
 } from '../state/films/film.selectors';
 import { loadFilms } from '../state/films/films.actions';
 
@@ -35,6 +36,9 @@ import { loadFilms } from '../state/films/films.actions';
 
     <ng-template #filmList>
       <div>
+        @if (isLoading$ | async) {
+        <p>Loading...</p>
+        } @else {
         <ul style="padding: 0px;">
           @for (film of films$ | async; track $index) {
           <li
@@ -45,7 +49,7 @@ import { loadFilms } from '../state/films/films.actions';
               'align-items': 'flex-start',
               'margin-bottom': '1em',
               padding: '.5em',
-              border: '1px solid black'
+              border: '1px solid'
             }"
           >
             <img [src]="film.poster" [alt]="film.title" width="50" />
@@ -66,6 +70,7 @@ import { loadFilms } from '../state/films/films.actions';
           </li>
           }
         </ul>
+        }
       </div>
     </ng-template>
   `,
@@ -80,6 +85,7 @@ import { loadFilms } from '../state/films/films.actions';
 export class FilmsComponent implements OnInit, AfterViewInit {
   films$: Observable<Film[]>;
   error$: Observable<string>;
+  isLoading$: Observable<boolean>;
 
   searchEl: Signal<ElementRef | undefined> = viewChild('searchEl', {
     read: ElementRef,
@@ -89,6 +95,7 @@ export class FilmsComponent implements OnInit, AfterViewInit {
   constructor() {
     this.films$ = this._store.pipe(select(selectAllFilms));
     this.error$ = this._store.pipe(select(selectFilmsError));
+    this.isLoading$ = this._store.pipe(select(selectIsLoading));
   }
 
   private _store: Store = inject(Store);

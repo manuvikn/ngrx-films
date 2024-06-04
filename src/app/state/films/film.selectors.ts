@@ -12,3 +12,8 @@ export const selectFilmsError = createSelector(
   selectFilmState,
   (state: FilmsState) => state.error
 );
+
+export const selectIsLoading = createSelector(
+  selectFilmState,
+  (state: FilmsState) => state.loading
+);
